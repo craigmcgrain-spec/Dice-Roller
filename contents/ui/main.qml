@@ -36,9 +36,11 @@ PlasmoidItem {
             anchors.margins: Kirigami.Units.largeSpacing
             spacing: Kirigami.Units.largeSpacing
 
-            Kirigami.Heading {
+            Text {
                 text: "🎲 Dice Roller"
-                level: 2
+                font.pixelSize: Kirigami.Theme.defaultFont.pixelSize * 1.8
+                font.bold: true
+                color: Kirigami.Theme.textColor
                 Layout.alignment: Qt.AlignHCenter
             }
 
@@ -77,8 +79,9 @@ PlasmoidItem {
                 Layout.fillWidth: true
                 spacing: Kirigami.Units.largeSpacing
 
-                Controls.Label {
+                Text {
                     text: "Count:"
+                    color: Kirigami.Theme.textColor
                 }
 
                 Controls.SpinBox {
@@ -91,7 +94,12 @@ PlasmoidItem {
                 }
             }
 
-            Kirigami.Separator { Layout.fillWidth: true }
+            Rectangle {
+                Layout.fillWidth: true
+                height: 1
+                color: Kirigami.Theme.textColor
+                opacity: 0.2
+            }
 
             Controls.Button {
                 id: rollButton
@@ -130,26 +138,28 @@ PlasmoidItem {
                     anchors.margins: Kirigami.Units.largeSpacing
                     spacing: Kirigami.Units.smallSpacing
 
-                    Controls.Label {
+                    Text {
                         text: root.lastRoll ? "Total: " + root.lastRoll.total : "Roll to see results"
                         font.pixelSize: Kirigami.Theme.defaultFont.pixelSize * 2.5
                         font.bold: true
+                        color: Kirigami.Theme.textColor
                         Layout.alignment: Qt.AlignHCenter
                     }
 
-                    Controls.Label {
+                    Text {
                         text: root.lastRoll ? root.lastRoll.notation : ""
                         font.pixelSize: Kirigami.Theme.defaultFont.pixelSize * 0.9
-                        opacity: 0.7
+                        color: Kirigami.Theme.disabledTextColor
                         Layout.alignment: Qt.AlignHCenter
                     }
 
-                    Controls.Label {
+                    Text {
                         text: root.lastRoll ? "[" + root.lastRoll.rolls.join(", ") + "]" : ""
+                        color: Kirigami.Theme.textColor
                         Layout.alignment: Qt.AlignHCenter
                     }
 
-                    Controls.Label {
+                    Text {
                         text: root.criticalMessage
                         font.pixelSize: Kirigami.Theme.defaultFont.pixelSize * 1.3
                         font.bold: true
@@ -163,9 +173,10 @@ PlasmoidItem {
                 }
             }
 
-            Controls.Label {
+            Text {
                 text: "History:"
                 font.bold: true
+                color: Kirigami.Theme.textColor
                 font.pixelSize: Kirigami.Theme.defaultFont.pixelSize * 1.1
             }
 
@@ -188,16 +199,17 @@ PlasmoidItem {
                             anchors.margins: Kirigami.Units.smallSpacing
                             spacing: 2
 
-                            Controls.Label {
+                            Text {
                                 text: modelData.notation + ": " + modelData.total
                                 font.bold: true
+                                color: Kirigami.Theme.textColor
                                 font.pixelSize: Kirigami.Theme.defaultFont.pixelSize * 0.95
                             }
 
-                            Controls.Label {
+                            Text {
                                 text: "[" + modelData.rolls.join(", ") + "]"
                                 font.pixelSize: Kirigami.Theme.defaultFont.pixelSize * 0.8
-                                opacity: 0.7
+                                color: Kirigami.Theme.disabledTextColor
                             }
                         }
                     }
