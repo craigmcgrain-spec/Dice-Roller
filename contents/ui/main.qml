@@ -137,8 +137,6 @@ PlasmoidItem {
                     // Bounce animation — directly on diceVisual.scale
                     SequentialAnimation {
                         id: diceBounceAnim
-                        target: diceVisual
-                        property: "scale"  // ignored — see individual animations
                         running: false
                         NumberAnimation { target: diceVisual; property: "scale"; from: 1.0; to: 0.6;  duration: 150; easing.type: Easing.InQuad }
                         NumberAnimation { target: diceVisual; property: "scale"; from: 0.6; to: 1.2;  duration: 300; easing.type: Easing.OutBack }
