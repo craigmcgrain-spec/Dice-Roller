@@ -229,6 +229,13 @@ PlasmoidItem {
                 font.pixelSize: Kirigami.Theme.defaultFont.pixelSize * 1.2
                 font.bold: true
                 enabled: !root.isRolling
+                contentItem: Text {
+                    text: parent.text
+                    color: "white"
+                    font: parent.font
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                }
                 background: Rectangle {
                     color: rollButton.hovered && !root.isRolling ? Kirigami.Theme.highlightColor : Kirigami.Theme.alternateBackgroundColor
                     radius: 8
