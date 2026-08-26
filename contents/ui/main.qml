@@ -14,7 +14,8 @@ PlasmoidItem {
     Layout.minimumWidth: Kirigami.Units.gridUnit * 18
     Layout.minimumHeight: Kirigami.Units.gridUnit * 28
 
-    property var rollHistory: []
+    ListModel { id: rollHistoryModel }
+    property var rollHistory: []  // kept for Clear History visibility check
     property string selectedDice: "d20"
     property int diceCount: 1
     property var lastRoll: null
@@ -114,9 +115,13 @@ PlasmoidItem {
             root.criticalMessage = critMsg
             root.displayNumber = total
             root.isRolling = false
-            root.rollHistory.unshift(root.lastRoll)
-            if (root.rollHistory.length > 5) root.rollHistory.pop()
-            root.rollHistory = root.rollHistory
+            rollHistoryModel.insert(0, {
+                notation: root.diceCount + root.selectedDice,
+                rollsText: "[" + rolls.join(", ") + "]",
+                total: total
+            })
+            if (rollHistoryModel.count > 5) rollHistoryModel.remove(5)
+            root.rollHistory = [1]  // trigger Clear History visibility
         }
     }
 
@@ -350,32 +355,28 @@ PlasmoidItem {
 
             Repeater {
                 id: historyRepeater
-                model: 5
+                model: rollHistoryModel
                 delegate: Rectangle {
                     Layout.fillWidth: true
-                    height: visible ? Kirigami.Units.gridUnit * 2 : 0
-                    visible: index < root.rollHistory.length
+                    height: Kirigami.Units.gridUnit * 2
                     color: index % 2 === 0 ? Kirigami.Theme.backgroundColor : Kirigami.Theme.alternateBackgroundColor
                     border.color: Kirigami.Theme.textColor
-                    border.width: visible ? 1 : 0
+                    border.width: 1
                     clip: true
-
-                    property var entry: root.rollHistory[index] || null
 
                     RowLayout {
                         anchors.fill: parent
                         anchors.margins: Kirigami.Units.smallSpacing
-                        visible: parent.entry !== null
 
                         Text {
-                            text: parent.parent.entry ? parent.parent.entry.notation + ": " + parent.parent.entry.total : ""
+                            text: model.notation + ": " + model.total
                             font.bold: true
                             color: "white"
                             font.pixelSize: Kirigami.Theme.defaultFont.pixelSize * 0.9
                         }
                         Item { Layout.fillWidth: true }
                         Text {
-                            text: parent.parent.entry ? "[" + parent.parent.entry.rolls.join(", ") + "]" : ""
+                            text: model.rollsText
                             font.pixelSize: Kirigami.Theme.defaultFont.pixelSize * 0.8
                             color: "white"
                         }
@@ -386,8 +387,8 @@ PlasmoidItem {
             Controls.Button {
                 text: "Clear History"
                 Layout.fillWidth: true; flat: true
-                visible: root.rollHistory.length > 0
-                onClicked: root.rollHistory = []
+                visible: rollHistoryModel.count > 0
+                onClicked: { rollHistoryModel.clear(); root.rollHistory = [] }
                 Layout.bottomMargin: Kirigami.Units.largeSpacing
             }
         }
