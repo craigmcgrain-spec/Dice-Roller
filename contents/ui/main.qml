@@ -136,7 +136,7 @@ PlasmoidItem {
             // Title
             Text {
                 text: "🎲 Dice Roller"
-                font.pixelSize: Kirigami.Theme.defaultFont.pixelSize * 1.6
+                font.pixelSize: Kirigami.Theme.defaultFont.pixelSize * 1.1
                 font.bold: true
                 color: Kirigami.Theme.textColor
                 Layout.alignment: Qt.AlignHCenter
