@@ -11,8 +11,8 @@ PlasmoidItem {
 
     Layout.preferredWidth: Kirigami.Units.gridUnit * 22
     Layout.preferredHeight: Kirigami.Units.gridUnit * 32
-    Layout.minimumWidth: Kirigami.Units.gridUnit * 18
-    Layout.minimumHeight: Kirigami.Units.gridUnit * 28
+    Layout.minimumWidth: Kirigami.Units.gridUnit * 14
+    Layout.minimumHeight: Kirigami.Units.gridUnit * 20
 
     ListModel { id: rollHistoryModel }
     property var rollHistory: []  // kept for Clear History visibility check
@@ -144,15 +144,18 @@ PlasmoidItem {
                 Layout.bottomMargin: Kirigami.Units.smallSpacing
             }
 
-            // Dice face
+            // Dice face — fills remaining vertical space between header and controls
             Item {
                 Layout.fillWidth: true
-                Layout.preferredHeight: Kirigami.Units.gridUnit * 7
+                Layout.fillHeight: true
+                Layout.minimumHeight: Kirigami.Units.gridUnit * 5
 
                 Item {
                     id: diceVisual
-                    width: Kirigami.Units.gridUnit * 5
-                    height: Kirigami.Units.gridUnit * 5
+                    // Size to 80% of the smaller dimension of the available area
+                    property real faceSize: Math.min(parent.width, parent.height) * 0.8
+                    width: faceSize
+                    height: faceSize
                     anchors.centerIn: parent
 
                     property color diceColor: root.isCritical && root.criticalMessage === "You're a Natural" ? "#2e7d32"
@@ -200,7 +203,7 @@ PlasmoidItem {
                         id: diceValueText
                         anchors.centerIn: parent
                         text: root.displayNumber
-                        font.pixelSize: Kirigami.Units.gridUnit * 1.8
+                        font.pixelSize: diceVisual.width * 0.32
                         font.bold: true
                         color: "white"
                         style: Text.Outline
@@ -246,7 +249,7 @@ PlasmoidItem {
                     anchors.horizontalCenter: parent.horizontalCenter
                     visible: root.isCritical && !root.isRolling
                     text: root.criticalMessage
-                    font.pixelSize: Kirigami.Theme.defaultFont.pixelSize
+                    font.pixelSize: Math.max(Kirigami.Theme.defaultFont.pixelSize, diceVisual.width * 0.12)
                     font.bold: true
                     color: root.criticalMessage === "You're a Natural" ? Kirigami.Theme.positiveTextColor : Kirigami.Theme.negativeTextColor
                     SequentialAnimation on opacity {
