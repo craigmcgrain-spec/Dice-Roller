@@ -139,7 +139,7 @@ PlasmoidItem {
                 font.pixelSize: Kirigami.Theme.defaultFont.pixelSize * 1.1
                 font.bold: true
                 color: Kirigami.Theme.textColor
-                Layout.alignment: Qt.AlignHCenter
+                Layout.alignment: Qt.AlignLeft
                 Layout.topMargin: Kirigami.Units.smallSpacing
             }
 
