@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # KDE Plasma Dice Roller Installation Script
-# For Fedora 44 with KDE Plasma
+# For Fedora 44 with KDE Plasma 6
 
 set -e
 
@@ -16,14 +16,19 @@ SYSTEM_INSTALL_DIR="/usr/share/plasma/plasmoids/org.kde.plasma.diceroller"
 
 # Check for required tools
 echo "Checking for required tools..."
-if ! command -v kpackagetool5 &> /dev/null; then
-    echo "❌ kpackagetool5 not found. Installing KDE development tools..."
-    sudo dnf install -y kdebase-workspace-devel
+PLASMA_TOOL="kpackagetool6"
+PLASMA_CMD="kstart6"
+SYCOCA_CMD="kbuildsycoca6"
+
+if ! command -v $PLASMA_TOOL &> /dev/null; then
+    echo "❌ $PLASMA_TOOL not found. Installing KDE Plasma 6 development tools..."
+    echo "This requires: kde-frameworks-devel and plasma-framework-devel"
+    sudo dnf install -y plasma-framework-devel kde-frameworks-devel
 fi
 
 # Uninstall if already exists
 echo "Cleaning up old installations..."
-kpackagetool5 -r org.kde.plasma.diceroller 2>/dev/null || true
+$PLASMA_TOOL -r org.kde.plasma.diceroller 2>/dev/null || true
 
 # Create installation directory
 echo "Creating installation directory..."
@@ -32,22 +37,23 @@ mkdir -p "$LOCAL_INSTALL_DIR"
 # Copy files
 echo "Copying widget files..."
 cp metadata.desktop "$LOCAL_INSTALL_DIR/"
+cp metadata.json "$LOCAL_INSTALL_DIR/"
 cp -r ui "$LOCAL_INSTALL_DIR/" 2>/dev/null || true
 cp -r src "$LOCAL_INSTALL_DIR/" 2>/dev/null || true
 
 # Install the widget
-echo "Installing widget with kpackagetool5..."
-kpackagetool5 -i "$LOCAL_INSTALL_DIR"
+echo "Installing widget with $PLASMA_TOOL..."
+$PLASMA_TOOL -i "$LOCAL_INSTALL_DIR"
 
 # Rebuild Plasma cache
 echo "Rebuilding Plasma cache..."
-kbuildsycoca5
+$SYCOCA_CMD
 
 # Restart Plasma Shell
 echo "Restarting Plasma Shell..."
 killall plasmashell 2>/dev/null || true
 sleep 2
-kstart5 plasmashell &
+$PLASMA_CMD plasmashell &
 
 # Wait for Plasma to restart
 sleep 3
@@ -56,11 +62,15 @@ echo "✅ Installation complete!"
 echo ""
 echo "📖 Next steps:"
 echo "1. Right-click on your desktop or panel"
-echo "2. Select 'Add Widgets'"
+echo "2. Select 'Add Widgets...'"
 echo "3. Search for 'Dice Roller'"
 echo "4. Click to add the widget"
 echo ""
 echo "If the widget doesn't appear:"
-echo "  - Run: kbuildsycoca5"
-echo "  - Run: killall plasmashell && kstart5 plasmashell &"
+echo "  - Run: $SYCOCA_CMD"
+echo "  - Run: killall plasmashell && $PLASMA_CMD plasmashell &"
 echo "  - Check: journalctl -n 50 | grep plasma"
+echo ""
+echo "For Fedora 44 with KDE Plasma 6:"
+echo "  - Ensure you have plasma-framework-devel installed"
+echo "  - Use Python 3.11+ for any scripting needs"
