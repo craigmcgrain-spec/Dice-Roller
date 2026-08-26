@@ -362,14 +362,14 @@ PlasmoidItem {
                         Text {
                             text: root.rollHistory[index].notation + ": " + root.rollHistory[index].total
                             font.bold: true
-                            color: Kirigami.Theme.textColor
+                            color: "white"
                             font.pixelSize: Kirigami.Theme.defaultFont.pixelSize * 0.9
                         }
                         Item { Layout.fillWidth: true }
                         Text {
                             text: "[" + root.rollHistory[index].rolls.join(", ") + "]"
                             font.pixelSize: Kirigami.Theme.defaultFont.pixelSize * 0.8
-                            color: Kirigami.Theme.disabledTextColor
+                            color: "white"
                         }
                     }
                 }
