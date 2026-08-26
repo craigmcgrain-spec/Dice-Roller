@@ -1,7 +1,7 @@
 {
   "name": "dice-roller-plugin",
-  "version": "1.1.0",
-  "description": "A comprehensive polyhedral dice roller plugin for tabletop gaming with 3D animations",
+  "version": "2.0.0",
+  "description": "A comprehensive polyhedral dice roller plugin for tabletop gaming. Compatible with KDE Plasma 6 and Fedora 44.",
   "main": "src/index.js",
   "scripts": {
     "test": "jest",
@@ -20,7 +20,11 @@
     "gaming",
     "polyhedral",
     "3d",
-    "animation"
+    "animation",
+    "kde",
+    "plasma",
+    "plasma6",
+    "fedora"
   ],
   "author": "Craig McGrain",
   "license": "MIT",
@@ -30,7 +34,7 @@
     "eslint": "^8.50.0"
   },
   "engines": {
-    "node": ">=14.0.0"
+    "node": ">=16.0.0"
   },
   "repository": {
     "type": "git",

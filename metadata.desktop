@@ -1,21 +1,16 @@
 [Desktop Entry]
 Name=Dice Roller
-Comment=Roll polyhedral dice for tabletop gaming with 3D support
+Comment=Roll polyhedral dice for tabletop gaming
 
 Type=Service
 X-KDE-ServiceTypes=Plasma/Applet
 X-KDE-PluginInfo-Name=org.kde.plasma.diceroller
-X-KDE-PluginInfo-Version=1.1.0
+X-KDE-PluginInfo-Version=2.0.0
 X-KDE-PluginInfo-Category=Utilities
 X-KDE-PluginInfo-License=MIT
 X-KDE-PluginInfo-Author=Craig McGrain
 X-KDE-PluginInfo-Website=https://github.com/craigmcgrain-spec/Dice-Roller
 X-KDE-PluginInfo-Email=craigmcgrain@gmail.com
 X-KDE-PluginInfo-EnabledByDefault=true
-
-X-Plasma-API=declarativeappletscript
-X-Plasma-MainScript=ui/main.qml
-X-Plasma-RemoteLocation=
-X-Plasma-DBusActivationName=
 
 Icon=go-up
