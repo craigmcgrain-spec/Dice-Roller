@@ -115,7 +115,7 @@ PlasmoidItem {
             root.displayNumber = total
             root.isRolling = false
             root.rollHistory.unshift(root.lastRoll)
-            if (root.rollHistory.length > 20) root.rollHistory.pop()
+            if (root.rollHistory.length > 5) root.rollHistory.pop()
             root.rollHistory = root.rollHistory
         }
     }
@@ -346,20 +346,31 @@ PlasmoidItem {
 
             Rectangle { Layout.fillWidth: true; height: 1; color: Kirigami.Theme.textColor; opacity: 0.15 }
 
-            Text { text: "History:"; font.bold: true; color: Kirigami.Theme.textColor }
+            Text { text: "Last 5 Rolls:"; font.bold: true; color: Kirigami.Theme.textColor }
 
             Repeater {
-                model: root.rollHistory
+                model: Math.min(root.rollHistory.length, 5)
                 Rectangle {
-                    width: parent ? parent.width : 0
+                    Layout.fillWidth: true
                     height: Kirigami.Units.gridUnit * 2
                     color: index % 2 === 0 ? Kirigami.Theme.backgroundColor : Kirigami.Theme.alternateBackgroundColor
-                    border.color: Kirigami.Theme.textColor; border.width: 1
+                    border.color: Kirigami.Theme.textColor
+                    border.width: 1
                     RowLayout {
-                        anchors.fill: parent; anchors.margins: Kirigami.Units.smallSpacing
-                        Text { text: modelData.notation + ": " + modelData.total; font.bold: true; color: Kirigami.Theme.textColor; font.pixelSize: Kirigami.Theme.defaultFont.pixelSize * 0.9 }
+                        anchors.fill: parent
+                        anchors.margins: Kirigami.Units.smallSpacing
+                        Text {
+                            text: root.rollHistory[index].notation + ": " + root.rollHistory[index].total
+                            font.bold: true
+                            color: Kirigami.Theme.textColor
+                            font.pixelSize: Kirigami.Theme.defaultFont.pixelSize * 0.9
+                        }
                         Item { Layout.fillWidth: true }
-                        Text { text: "[" + modelData.rolls.join(", ") + "]"; font.pixelSize: Kirigami.Theme.defaultFont.pixelSize * 0.8; color: Kirigami.Theme.disabledTextColor }
+                        Text {
+                            text: "[" + root.rollHistory[index].rolls.join(", ") + "]"
+                            font.pixelSize: Kirigami.Theme.defaultFont.pixelSize * 0.8
+                            color: Kirigami.Theme.disabledTextColor
+                        }
                     }
                 }
             }
