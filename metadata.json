@@ -1,0 +1,25 @@
+{
+    "KPackageStructure": "Plasma/Applet",
+    "KPlugin": {
+        "Authors": [
+            {
+                "Email": "craigmcgrain@gmail.com",
+                "Name": "Craig McGrain"
+            }
+        ],
+        "Category": "Utilities",
+        "Description": "Roll polyhedral dice for tabletop gaming with 3D support",
+        "EnabledByDefault": true,
+        "Icon": "go-up",
+        "Id": "org.kde.plasma.diceroller",
+        "License": "MIT",
+        "Name": "Dice Roller",
+        "ServiceTypes": [
+            "Plasma/Applet"
+        ],
+        "Version": "1.1.0",
+        "Website": "https://github.com/craigmcgrain-spec/Dice-Roller"
+    },
+    "X-Plasma-API": "declarativeappletscript",
+    "X-Plasma-MainScript": "ui/main.qml"
+}
