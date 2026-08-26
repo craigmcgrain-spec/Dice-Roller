@@ -77,7 +77,7 @@ PlasmoidItem {
                 Layout.fillWidth: true
                 spacing: Kirigami.Units.largeSpacing
 
-                Kirigami.Label {
+                Controls.Label {
                     text: "Count:"
                 }
 
@@ -130,26 +130,26 @@ PlasmoidItem {
                     anchors.margins: Kirigami.Units.largeSpacing
                     spacing: Kirigami.Units.smallSpacing
 
-                    Kirigami.Label {
+                    Controls.Label {
                         text: root.lastRoll ? "Total: " + root.lastRoll.total : "Roll to see results"
                         font.pixelSize: Kirigami.Theme.defaultFont.pixelSize * 2.5
                         font.bold: true
                         Layout.alignment: Qt.AlignHCenter
                     }
 
-                    Kirigami.Label {
+                    Controls.Label {
                         text: root.lastRoll ? root.lastRoll.notation : ""
                         font.pixelSize: Kirigami.Theme.defaultFont.pixelSize * 0.9
                         opacity: 0.7
                         Layout.alignment: Qt.AlignHCenter
                     }
 
-                    Kirigami.Label {
+                    Controls.Label {
                         text: root.lastRoll ? "[" + root.lastRoll.rolls.join(", ") + "]" : ""
                         Layout.alignment: Qt.AlignHCenter
                     }
 
-                    Kirigami.Label {
+                    Controls.Label {
                         text: root.criticalMessage
                         font.pixelSize: Kirigami.Theme.defaultFont.pixelSize * 1.3
                         font.bold: true
@@ -163,7 +163,7 @@ PlasmoidItem {
                 }
             }
 
-            Kirigami.Label {
+            Controls.Label {
                 text: "History:"
                 font.bold: true
                 font.pixelSize: Kirigami.Theme.defaultFont.pixelSize * 1.1
@@ -188,13 +188,13 @@ PlasmoidItem {
                             anchors.margins: Kirigami.Units.smallSpacing
                             spacing: 2
 
-                            Kirigami.Label {
+                            Controls.Label {
                                 text: modelData.notation + ": " + modelData.total
                                 font.bold: true
                                 font.pixelSize: Kirigami.Theme.defaultFont.pixelSize * 0.95
                             }
 
-                            Kirigami.Label {
+                            Controls.Label {
                                 text: "[" + modelData.rolls.join(", ") + "]"
                                 font.pixelSize: Kirigami.Theme.defaultFont.pixelSize * 0.8
                                 opacity: 0.7
