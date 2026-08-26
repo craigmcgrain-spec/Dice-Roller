@@ -8,18 +8,14 @@
             }
         ],
         "Category": "Utilities",
-        "Description": "Roll polyhedral dice for tabletop gaming. Compatible with KDE Plasma 6 and Fedora 44.",
+        "Description": "Roll polyhedral dice for tabletop gaming",
         "EnabledByDefault": true,
         "Icon": "go-up",
         "Id": "org.kde.plasma.diceroller",
         "License": "MIT",
         "Name": "Dice Roller",
-        "ServiceTypes": [
-            "Plasma/Applet"
-        ],
         "Version": "2.0.0",
         "Website": "https://github.com/craigmcgrain-spec/Dice-Roller"
     },
-    "X-Plasma-API": "declarativeappletscript",
-    "X-Plasma-MainScript": "ui/main.qml"
+    "X-Plasma-API-Minimum-Version": "6.0"
 }
