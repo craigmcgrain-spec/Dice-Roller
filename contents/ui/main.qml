@@ -349,25 +349,33 @@ PlasmoidItem {
             Text { text: "Last 5 Rolls:"; font.bold: true; color: Kirigami.Theme.textColor }
 
             Repeater {
-                model: Math.min(root.rollHistory.length, 5)
-                Rectangle {
+                id: historyRepeater
+                model: 5
+                delegate: Rectangle {
                     Layout.fillWidth: true
-                    height: Kirigami.Units.gridUnit * 2
+                    height: visible ? Kirigami.Units.gridUnit * 2 : 0
+                    visible: index < root.rollHistory.length
                     color: index % 2 === 0 ? Kirigami.Theme.backgroundColor : Kirigami.Theme.alternateBackgroundColor
                     border.color: Kirigami.Theme.textColor
-                    border.width: 1
+                    border.width: visible ? 1 : 0
+                    clip: true
+
+                    property var entry: root.rollHistory[index] || null
+
                     RowLayout {
                         anchors.fill: parent
                         anchors.margins: Kirigami.Units.smallSpacing
+                        visible: parent.entry !== null
+
                         Text {
-                            text: root.rollHistory[index].notation + ": " + root.rollHistory[index].total
+                            text: parent.parent.entry ? parent.parent.entry.notation + ": " + parent.parent.entry.total : ""
                             font.bold: true
                             color: "white"
                             font.pixelSize: Kirigami.Theme.defaultFont.pixelSize * 0.9
                         }
                         Item { Layout.fillWidth: true }
                         Text {
-                            text: "[" + root.rollHistory[index].rolls.join(", ") + "]"
+                            text: parent.parent.entry ? "[" + parent.parent.entry.rolls.join(", ") + "]" : ""
                             font.pixelSize: Kirigami.Theme.defaultFont.pixelSize * 0.8
                             color: "white"
                         }
