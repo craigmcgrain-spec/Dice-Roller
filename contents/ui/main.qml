@@ -29,6 +29,60 @@ PlasmoidItem {
         "d12": 12, "d20": 20, "d100": 100
     })
 
+    // Returns array of {x,y} points for each die shape, normalised to a unit circle
+    function dicePoints(type, cx, cy, r) {
+        var pts = []
+        if (type === "d4") {
+            // Equilateral triangle pointing up
+            for (var i = 0; i < 3; i++) {
+                var a = (i * 120 - 90) * Math.PI / 180
+                pts.push({ x: cx + r * Math.cos(a), y: cy + r * Math.sin(a) })
+            }
+        } else if (type === "d6") {
+            // Square rotated 45°
+            for (var i = 0; i < 4; i++) {
+                var a = (i * 90 - 45) * Math.PI / 180
+                pts.push({ x: cx + r * Math.cos(a), y: cy + r * Math.sin(a) })
+            }
+        } else if (type === "d8") {
+            // Diamond (4-pointed star / elongated diamond)
+            pts = [
+                { x: cx,     y: cy - r },
+                { x: cx + r * 0.65, y: cy },
+                { x: cx,     y: cy + r },
+                { x: cx - r * 0.65, y: cy }
+            ]
+        } else if (type === "d10") {
+            // Kite / irregular pentagon (d10 looks like a squished diamond)
+            pts = [
+                { x: cx,           y: cy - r },
+                { x: cx + r * 0.85, y: cy - r * 0.1 },
+                { x: cx + r * 0.55, y: cy + r },
+                { x: cx - r * 0.55, y: cy + r },
+                { x: cx - r * 0.85, y: cy - r * 0.1 }
+            ]
+        } else if (type === "d12") {
+            // Regular pentagon
+            for (var i = 0; i < 5; i++) {
+                var a = (i * 72 - 90) * Math.PI / 180
+                pts.push({ x: cx + r * Math.cos(a), y: cy + r * Math.sin(a) })
+            }
+        } else if (type === "d20") {
+            // Regular hexagon
+            for (var i = 0; i < 6; i++) {
+                var a = (i * 60 - 90) * Math.PI / 180
+                pts.push({ x: cx + r * Math.cos(a), y: cy + r * Math.sin(a) })
+            }
+        } else {
+            // d100 — octagon
+            for (var i = 0; i < 8; i++) {
+                var a = (i * 45 - 22.5) * Math.PI / 180
+                pts.push({ x: cx + r * Math.cos(a), y: cy + r * Math.sin(a) })
+            }
+        }
+        return pts
+    }
+
     signal rollStarted()
 
     function startRoll() {
@@ -53,7 +107,7 @@ PlasmoidItem {
             var critical = false; var critMsg = ""
             if (root.selectedDice === "d20" && root.diceCount === 1) {
                 if (rolls[0] === 20) { critical = true; critMsg = "You're a Natural" }
-                else if (rolls[0] === 1)  { critical = true; critMsg = "You're Fucked" }
+                else if (rolls[0] === 1) { critical = true; critMsg = "You're Fucked" }
             }
             root.lastRoll = { notation: root.diceCount + root.selectedDice, rolls: rolls, total: total }
             root.isCritical = critical
@@ -85,35 +139,70 @@ PlasmoidItem {
                 Layout.bottomMargin: Kirigami.Units.smallSpacing
             }
 
-            // Dice face — all animation lives here where diceVisual is in scope
+            // Dice face
             Item {
                 Layout.fillWidth: true
                 Layout.preferredHeight: Kirigami.Units.gridUnit * 7
 
-                Rectangle {
+                Item {
                     id: diceVisual
                     width: Kirigami.Units.gridUnit * 5
                     height: Kirigami.Units.gridUnit * 5
                     anchors.centerIn: parent
-                    radius: 12
-                    color: root.isCritical && root.criticalMessage === "You're a Natural" ? "#2e7d32"
-                         : root.isCritical && root.criticalMessage === "You're Fucked"    ? "#c62828"
-                         : Kirigami.Theme.highlightColor
-                    border.color: Qt.lighter(color, 1.5)
-                    border.width: 3
-                    Behavior on color { ColorAnimation { duration: 200 } }
+
+                    property color diceColor: root.isCritical && root.criticalMessage === "You're a Natural" ? "#2e7d32"
+                                            : root.isCritical && root.criticalMessage === "You're Fucked"    ? "#c62828"
+                                            : Kirigami.Theme.highlightColor
+
+                    Behavior on diceColor { ColorAnimation { duration: 200 } }
+
+                    // Canvas draws the polyhedral shape
+                    Canvas {
+                        id: diceCanvas
+                        anchors.fill: parent
+                        onPaint: {
+                            var ctx = getContext("2d")
+                            ctx.clearRect(0, 0, width, height)
+                            var cx = width / 2
+                            var cy = height / 2
+                            var r = Math.min(width, height) / 2 - 4
+                            var pts = root.dicePoints(root.selectedDice, cx, cy, r)
+                            ctx.beginPath()
+                            ctx.moveTo(pts[0].x, pts[0].y)
+                            for (var i = 1; i < pts.length; i++)
+                                ctx.lineTo(pts[i].x, pts[i].y)
+                            ctx.closePath()
+                            ctx.fillStyle = diceVisual.diceColor
+                            ctx.fill()
+                            ctx.strokeStyle = Qt.lighter(diceVisual.diceColor, 1.6).toString()
+                            ctx.lineWidth = 3
+                            ctx.stroke()
+                        }
+                        // Redraw when die type or color changes
+                        Connections {
+                            target: root
+                            function onSelectedDiceChanged() { diceCanvas.requestPaint() }
+                            function onIsCriticalChanged()   { diceCanvas.requestPaint() }
+                            function onCriticalMessageChanged() { diceCanvas.requestPaint() }
+                        }
+                        Connections {
+                            target: diceVisual
+                            function onDiceColorChanged() { diceCanvas.requestPaint() }
+                        }
+                    }
 
                     Text {
                         id: diceValueText
                         anchors.centerIn: parent
                         text: root.displayNumber
-                        font.pixelSize: Kirigami.Units.gridUnit * 2
+                        font.pixelSize: Kirigami.Units.gridUnit * 1.8
                         font.bold: true
                         color: "white"
+                        style: Text.Outline
+                        styleColor: Qt.rgba(0,0,0,0.4)
                     }
                 }
 
-                // Animations target diceVisual directly — same scope
                 NumberAnimation {
                     id: spinAnim
                     target: diceVisual
@@ -132,14 +221,12 @@ PlasmoidItem {
                     NumberAnimation { target: diceVisual; property: "scale"; from: 1.2; to: 1.0;  duration: 150; easing.type: Easing.InOutQuad }
                 }
 
-                // Number cycling timer — in same scope as diceValueText
                 Timer {
                     id: cycleTimer
                     interval: 60; repeat: true; running: root.isRolling
                     onTriggered: root.displayNumber = Math.floor(Math.random() * root.diceSides[root.selectedDice]) + 1
                 }
 
-                // Listen for rollStarted signal to trigger animations
                 Connections {
                     target: root
                     function onRollStarted() {
@@ -148,7 +235,7 @@ PlasmoidItem {
                     }
                 }
 
-                // Critical pulse text
+                // Critical pulse
                 Text {
                     anchors.bottom: parent.bottom
                     anchors.horizontalCenter: parent.horizontalCenter
