@@ -28,22 +28,13 @@ fi
 
 # Uninstall if already exists
 echo "Cleaning up old installations..."
-$PLASMA_TOOL -r org.kde.plasma.diceroller 2>/dev/null || true
+$PLASMA_TOOL --type Plasma/Applet -r org.kde.plasma.diceroller 2>/dev/null || true
+rm -rf "$LOCAL_INSTALL_DIR"
+rm -rf "$HOME/.local/share/kpackage/generic/org.kde.plasma.diceroller"
 
-# Create installation directory
-echo "Creating installation directory..."
-mkdir -p "$LOCAL_INSTALL_DIR"
-
-# Copy files
-echo "Copying widget files..."
-cp metadata.desktop "$LOCAL_INSTALL_DIR/"
-cp metadata.json "$LOCAL_INSTALL_DIR/"
-cp -r ui "$LOCAL_INSTALL_DIR/" 2>/dev/null || true
-cp -r src "$LOCAL_INSTALL_DIR/" 2>/dev/null || true
-
-# Install the widget
+# Install the widget (install directly from source dir with correct type)
 echo "Installing widget with $PLASMA_TOOL..."
-$PLASMA_TOOL -i "$LOCAL_INSTALL_DIR"
+$PLASMA_TOOL --type Plasma/Applet -i "$SCRIPT_DIR"
 
 # Rebuild Plasma cache
 echo "Rebuilding Plasma cache..."
@@ -51,7 +42,10 @@ $SYCOCA_CMD
 
 # Restart Plasma Shell
 echo "Restarting Plasma Shell..."
-killall plasmashell 2>/dev/null || true
+PID=$(pgrep -f plasmashell | head -1)
+if [ -n "$PID" ]; then
+    kill "$PID" 2>/dev/null || true
+fi
 sleep 2
 $PLASMA_CMD plasmashell &
 
