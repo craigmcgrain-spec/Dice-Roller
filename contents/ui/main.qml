@@ -142,6 +142,13 @@ PlasmoidItem {
                             root.criticalMessage = ""
                             diceValueText.text = modelData
                         }
+                        contentItem: Text {
+                            text: parent.text
+                            color: "white"
+                            font: parent.font
+                            horizontalAlignment: Text.AlignHCenter
+                            verticalAlignment: Text.AlignVCenter
+                        }
                         background: Rectangle {
                             color: parent.checked ? Kirigami.Theme.highlightColor : Kirigami.Theme.backgroundColor
                             border.color: Kirigami.Theme.textColor
