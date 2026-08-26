@@ -28,6 +28,56 @@ PlasmoidItem {
         "d12": 12, "d20": 20, "d100": 100
     })
 
+    // Timer to cycle numbers during animation — lives at root scope
+    Timer {
+        id: cycleTimer
+        interval: 55; repeat: true; running: root.isRolling
+        onTriggered: {
+            var sides = root.diceSides[root.selectedDice]
+            root.displayNumber = Math.floor(Math.random() * sides) + 1
+        }
+    }
+
+    // Timer to commit the real result mid-animation
+    Timer {
+        id: rollTimer
+        interval: 500; repeat: false
+        onTriggered: {
+            var sides = root.diceSides[root.selectedDice]
+            var rolls = []
+            var total = 0
+            for (var i = 0; i < root.diceCount; i++) {
+                var r = Math.floor(Math.random() * sides) + 1
+                rolls.push(r); total += r
+            }
+            var critical = false; var critMsg = ""
+            if (root.selectedDice === "d20" && root.diceCount === 1) {
+                if (rolls[0] === 20) { critical = true; critMsg = "You're a Natural" }
+                else if (rolls[0] === 1) { critical = true; critMsg = "You're Fucked" }
+            }
+            root.lastRoll = { notation: root.diceCount + root.selectedDice, rolls: rolls, total: total }
+            root.isCritical = critical
+            root.criticalMessage = critMsg
+            root.displayNumber = total
+            root.isRolling = false
+            root.rollHistory.unshift(root.lastRoll)
+            if (root.rollHistory.length > 20) root.rollHistory.pop()
+            root.rollHistory = root.rollHistory
+        }
+    }
+
+    // Shared display number drives the dice face text
+    property int displayNumber: 20
+
+    function startRoll() {
+        root.isRolling = true
+        root.isCritical = false
+        root.criticalMessage = ""
+        diceSpinAnim.restart()
+        diceBounceAnim.restart()
+        rollTimer.restart()
+    }
+
     fullRepresentation: Controls.ScrollView {
         Layout.fillWidth: true
         Layout.fillHeight: true
@@ -36,7 +86,6 @@ PlasmoidItem {
         ColumnLayout {
             width: parent.availableWidth
             spacing: Kirigami.Units.smallSpacing
-            anchors.margins: Kirigami.Units.largeSpacing
 
             Text {
                 text: "🎲 Dice Roller"
@@ -45,19 +94,19 @@ PlasmoidItem {
                 color: Kirigami.Theme.textColor
                 Layout.alignment: Qt.AlignHCenter
                 Layout.topMargin: Kirigami.Units.largeSpacing
+                Layout.bottomMargin: Kirigami.Units.smallSpacing
             }
 
-            // Animated dice face
+            // Dice face
             Item {
                 Layout.fillWidth: true
-                Layout.preferredHeight: diceVisual.height + Kirigami.Units.largeSpacing
-                Layout.alignment: Qt.AlignHCenter
+                Layout.preferredHeight: Kirigami.Units.gridUnit * 6
 
                 Rectangle {
                     id: diceVisual
                     width: Kirigami.Units.gridUnit * 5
                     height: Kirigami.Units.gridUnit * 5
-                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.centerIn: parent
                     radius: 12
                     color: root.isCritical && root.criticalMessage === "You're a Natural" ? "#2e7d32"
                          : root.isCritical && root.criticalMessage === "You're Fucked"    ? "#c62828"
@@ -67,52 +116,51 @@ PlasmoidItem {
                     Behavior on color { ColorAnimation { duration: 200 } }
 
                     Text {
-                        id: diceValueText
                         anchors.centerIn: parent
-                        text: root.lastRoll ? root.lastRoll.total : root.selectedDice
+                        text: root.displayNumber
                         font.pixelSize: Kirigami.Units.gridUnit * 2
                         font.bold: true
                         color: "white"
                     }
 
-                    NumberAnimation on rotation {
-                        id: spinAnim
+                    // Spin animation — directly on diceVisual.rotation
+                    NumberAnimation {
+                        id: diceSpinAnim
+                        target: diceVisual
+                        property: "rotation"
                         from: 0; to: 360
-                        duration: 600
+                        duration: 650
                         easing.type: Easing.InOutCubic
                         running: false
                     }
 
-                    SequentialAnimation on scale {
-                        id: bounceAnim
+                    // Bounce animation — directly on diceVisual.scale
+                    SequentialAnimation {
+                        id: diceBounceAnim
+                        target: diceVisual
+                        property: "scale"  // ignored — see individual animations
                         running: false
-                        NumberAnimation { from: 1.0; to: 0.65; duration: 150; easing.type: Easing.InQuad }
-                        NumberAnimation { from: 0.65; to: 1.15; duration: 280; easing.type: Easing.OutBack }
-                        NumberAnimation { from: 1.15; to: 1.0;  duration: 120; easing.type: Easing.InOutQuad }
-                        onFinished: root.isRolling = false
+                        NumberAnimation { target: diceVisual; property: "scale"; from: 1.0; to: 0.6;  duration: 150; easing.type: Easing.InQuad }
+                        NumberAnimation { target: diceVisual; property: "scale"; from: 0.6; to: 1.2;  duration: 300; easing.type: Easing.OutBack }
+                        NumberAnimation { target: diceVisual; property: "scale"; from: 1.2; to: 1.0;  duration: 150; easing.type: Easing.InOutQuad }
                     }
                 }
-            }
 
-            Timer {
-                id: cycleTimer
-                interval: 55; repeat: true; running: root.isRolling
-                onTriggered: diceValueText.text = Math.floor(Math.random() * root.diceSides[root.selectedDice]) + 1
-            }
-
-            // Critical message
-            Text {
-                visible: root.isCritical && !root.isRolling
-                text: root.criticalMessage
-                font.pixelSize: Kirigami.Theme.defaultFont.pixelSize * 1.1
-                font.bold: true
-                color: root.criticalMessage === "You're a Natural" ? Kirigami.Theme.positiveTextColor : Kirigami.Theme.negativeTextColor
-                Layout.alignment: Qt.AlignHCenter
-                SequentialAnimation on opacity {
-                    running: root.isCritical && !root.isRolling
-                    loops: Animation.Infinite
-                    NumberAnimation { from: 1.0; to: 0.2; duration: 500 }
-                    NumberAnimation { from: 0.2; to: 1.0; duration: 500 }
+                // Critical pulse text
+                Text {
+                    anchors.bottom: parent.bottom
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    visible: root.isCritical && !root.isRolling
+                    text: root.criticalMessage
+                    font.pixelSize: Kirigami.Theme.defaultFont.pixelSize * 1.0
+                    font.bold: true
+                    color: root.criticalMessage === "You're a Natural" ? Kirigami.Theme.positiveTextColor : Kirigami.Theme.negativeTextColor
+                    SequentialAnimation on opacity {
+                        running: root.isCritical && !root.isRolling
+                        loops: Animation.Infinite
+                        NumberAnimation { from: 1.0; to: 0.2; duration: 500 }
+                        NumberAnimation { from: 0.2; to: 1.0; duration: 500 }
+                    }
                 }
             }
 
@@ -140,7 +188,7 @@ PlasmoidItem {
                             root.lastRoll = null
                             root.isCritical = false
                             root.criticalMessage = ""
-                            diceValueText.text = modelData
+                            root.displayNumber = root.diceSides[modelData]
                         }
                         contentItem: Text {
                             text: parent.text
@@ -171,7 +219,6 @@ PlasmoidItem {
                 }
             }
 
-            // Roll button
             Controls.Button {
                 id: rollButton
                 text: root.isRolling ? "Rolling..." : "🎲 Roll " + root.diceCount + root.selectedDice
@@ -190,7 +237,6 @@ PlasmoidItem {
                 onClicked: root.startRoll()
             }
 
-            // Last roll detail
             Text {
                 visible: root.lastRoll !== null && !root.isRolling
                 text: root.lastRoll ? root.lastRoll.notation + "  →  [" + root.lastRoll.rolls.join(", ") + "]" : ""
@@ -212,22 +258,12 @@ PlasmoidItem {
                     width: parent ? parent.width : 0
                     height: Kirigami.Units.gridUnit * 2
                     color: index % 2 === 0 ? Kirigami.Theme.backgroundColor : Kirigami.Theme.alternateBackgroundColor
-                    border.color: Kirigami.Theme.textColor
-                    border.width: 1
+                    border.color: Kirigami.Theme.textColor; border.width: 1
                     RowLayout {
-                        anchors.fill: parent
-                        anchors.margins: Kirigami.Units.smallSpacing
-                        Text {
-                            text: modelData.notation + ": " + modelData.total
-                            font.bold: true; color: Kirigami.Theme.textColor
-                            font.pixelSize: Kirigami.Theme.defaultFont.pixelSize * 0.9
-                        }
+                        anchors.fill: parent; anchors.margins: Kirigami.Units.smallSpacing
+                        Text { text: modelData.notation + ": " + modelData.total; font.bold: true; color: Kirigami.Theme.textColor; font.pixelSize: Kirigami.Theme.defaultFont.pixelSize * 0.9 }
                         Item { Layout.fillWidth: true }
-                        Text {
-                            text: "[" + modelData.rolls.join(", ") + "]"
-                            font.pixelSize: Kirigami.Theme.defaultFont.pixelSize * 0.8
-                            color: Kirigami.Theme.disabledTextColor
-                        }
+                        Text { text: "[" + modelData.rolls.join(", ") + "]"; font.pixelSize: Kirigami.Theme.defaultFont.pixelSize * 0.8; color: Kirigami.Theme.disabledTextColor }
                     }
                 }
             }
@@ -240,42 +276,6 @@ PlasmoidItem {
                 onClicked: root.rollHistory = []
                 Layout.bottomMargin: Kirigami.Units.largeSpacing
             }
-        }
-    }
-
-    function startRoll() {
-        root.isRolling = true
-        root.isCritical = false
-        root.criticalMessage = ""
-        spinAnim.restart()
-        bounceAnim.restart()
-        rollTimer.restart()
-    }
-
-    Timer {
-        id: rollTimer
-        interval: 500; repeat: false
-        onTriggered: {
-            var sides = root.diceSides[root.selectedDice]
-            var rolls = []
-            var total = 0
-            for (var i = 0; i < root.diceCount; i++) {
-                var r = Math.floor(Math.random() * sides) + 1
-                rolls.push(r); total += r
-            }
-            var critical = false; var critMsg = ""
-            if (root.selectedDice === "d20" && root.diceCount === 1) {
-                if (rolls[0] === 20) { critical = true; critMsg = "You're a Natural" }
-                else if (rolls[0] === 1) { critical = true; critMsg = "You're Fucked" }
-            }
-            var result = { notation: root.diceCount + root.selectedDice, rolls: rolls, total: total }
-            root.lastRoll = result
-            root.isCritical = critical
-            root.criticalMessage = critMsg
-            diceValueText.text = total
-            root.rollHistory.unshift(result)
-            if (root.rollHistory.length > 20) root.rollHistory.pop()
-            root.rollHistory = root.rollHistory
         }
     }
 }
