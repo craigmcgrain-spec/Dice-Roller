@@ -1,0 +1,21 @@
+[Desktop Entry]
+Name=Dice Roller
+Comment=A polyhedral dice roller with 3D animations for tabletop gaming
+
+Type=Application
+Exec=plasmoidviewer -a org.kde.plasma.diceroller
+
+X-Plasma-API=declarativeappletscript
+X-Plasma-MainScript=ui/main.qml
+X-Plasma-Provides=org.kde.plasma.applet
+
+Icon=roll
+Categories=Utilities;Games;
+
+X-KDE-PluginInfo-Name=org.kde.plasma.diceroller
+X-KDE-PluginInfo-Category=Utilities
+X-KDE-PluginInfo-Version=1.1.0
+X-KDE-PluginInfo-License=MIT
+X-KDE-PluginInfo-Author=Craig McGrain
+X-KDE-PluginInfo-Email=craigmcgrain@gmail.com
+X-KDE-PluginInfo-Website=https://github.com/craigmcgrain-spec/Dice-Roller
