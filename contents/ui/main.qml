@@ -125,13 +125,12 @@ PlasmoidItem {
         }
     }
 
-    fullRepresentation: Controls.ScrollView {
-        Layout.fillWidth: true
-        Layout.fillHeight: true
-        contentWidth: availableWidth
+    fullRepresentation: Item {
+        anchors.fill: parent
 
         ColumnLayout {
-            width: parent.availableWidth
+            anchors.fill: parent
+            anchors.margins: Kirigami.Units.smallSpacing
             spacing: Kirigami.Units.smallSpacing
 
             Text {
