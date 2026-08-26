@@ -372,7 +372,7 @@ PlasmoidItem {
 
                 // ── RIGHT COLUMN: History ────────────────────────────────
                 ColumnLayout {
-                    Layout.preferredWidth: Kirigami.Units.gridUnit * 10
+                    Layout.preferredWidth: Kirigami.Units.gridUnit * 7
                     Layout.fillHeight: true
                     spacing: Kirigami.Units.smallSpacing
 
