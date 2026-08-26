@@ -77,7 +77,7 @@ kbuildsycoca6
 # Restart Plasma
 killall plasmashell
 sleep 2
-kstart6 plasmashell &
+kstart plasmashell &
 ```
 
 ## Adding the Widget to Your Desktop/Panel
@@ -101,7 +101,7 @@ kstart6 plasmashell &
    ```bash
    killall plasmashell
    sleep 2
-   kstart6 plasmashell &
+   kstart plasmashell &
    ```
 
 3. **Check for errors in logs:**
@@ -202,7 +202,7 @@ kbuildsycoca6
 # Restart Plasma to see changes
 killall plasmashell
 sleep 2
-kstart6 plasmashell &
+kstart plasmashell &
 
 # Monitor logs for errors
 journalctl -f | grep plasma

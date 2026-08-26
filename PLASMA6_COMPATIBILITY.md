@@ -16,14 +16,14 @@ This document outlines all changes made to ensure compatibility with Fedora 44 a
 - Plasma Framework: 6.0+
 - Qt Version: 6.0+
 - Node.js requirement: >=16.0.0
-- Installation tools: `kpackagetool6`, `kstart6`, `kbuildsycoca6`
+- Installation tools: `kpackagetool6`, `kstart`, `kbuildsycoca6`
 
 ## File Changes
 
 ### 1. `install-widget.sh` (Installation Script)
 **Changes Made:**
 - Updated `kpackagetool5` → `kpackagetool6`
-- Updated `kstart5` → `kstart6`
+- Updated `kstart5` → `kstart`
 - Updated `kbuildsycoca5` → `kbuildsycoca6`
 - Changed dependency check from `kdebase-workspace-devel` to `plasma-framework-devel kde-frameworks-devel`
 - Added variables for Plasma tools for easier maintenance

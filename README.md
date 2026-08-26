@@ -151,7 +151,7 @@ kbuildsycoca6
 # Restart Plasma to reload widget
 killall plasmashell
 sleep 2
-kstart6 plasmashell &
+kstart plasmashell &
 
 # Watch for errors
 journalctl -f | grep plasma
@@ -181,7 +181,7 @@ For a complete list of system requirements, see [FEDORA_PLASMA6_INSTALL.md](FEDO
 
 ### Widget Doesn't Appear
 1. Run `kbuildsycoca6`
-2. Restart Plasma: `killall plasmashell && kstart6 plasmashell &`
+2. Restart Plasma: `killall plasmashell && kstart plasmashell &`
 3. Check logs: `journalctl -n 50 | grep plasma`
 
 ### Import Errors
@@ -203,7 +203,7 @@ For more troubleshooting, see [FEDORA_PLASMA6_INSTALL.md](FEDORA_PLASMA6_INSTALL
 ### v2.0.0 (Current) - Fedora 44 & KDE Plasma 6
 - ✨ Full KDE Plasma 6 compatibility
 - ✨ Fedora 44 optimization
-- 🔄 Updated installation tools (kpackagetool6, kstart6)
+- 🔄 Updated installation tools (kpackagetool6, kstart)
 - 📚 Comprehensive documentation for Fedora 44
 - 🔧 Updated Node.js requirement to 16+
 - 🎨 Enhanced theme integration

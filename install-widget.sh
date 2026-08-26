@@ -17,7 +17,7 @@ SYSTEM_INSTALL_DIR="/usr/share/plasma/plasmoids/org.kde.plasma.diceroller"
 # Check for required tools
 echo "Checking for required tools..."
 PLASMA_TOOL="kpackagetool6"
-PLASMA_CMD="kstart6"
+PLASMA_CMD="kstart"
 SYCOCA_CMD="kbuildsycoca6"
 
 if ! command -v $PLASMA_TOOL &> /dev/null; then
